@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylesheets/app.css">
+</head>
+
+<body>
+    <!-- ══════════ LOGIN ══════════ -->
+    <div id="loginScreen">
+        <div class="loginCard">
+            <div class="loginLogo">
+                <div class="emblem">🌙</div>
+                <h1>Noor Ali Educational Center</h1>
+                <p>Management Information System</p>
+            </div>
+            <div class="formGroup">
+                <label>Role</label>
+                <select id="loginRole">
+                    <option value="Administrator">Admin</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Student">Student</option>
+                </select>
+            </div>
+            <div class="formGroup">
+                <label>Username</label>
+                <input type="text" id="loginUser" placeholder="Enter username">
+            </div>
+            <div class="formGroup">
+                <label>Password</label>
+                <div class="passwordField">
+                    <input type="password" id="loginPass" placeholder="Enter password">
+                    <button type="button" class="passwordToggle" onclick="togglePassword()">Show</button>
+                </div>
+            </div>
+            <button class="btnPrimary" onclick="doLogin()">Sign In →</button>
+            <button class="btn btn-gold" style="margin-top: 12px;" type="button" onclick="openModal('modalRegister')">Create User</button>
+            <div class="loginError" id="loginError"></div>
+            <div class="demoHint">
+                Demo credentials — Admin: admin / 1234 &nbsp;|&nbsp; Teacher: teacher / 1234 &nbsp;|&nbsp; Student:
+                student / 1234
+            </div>
+        </div>
+    </div>
+
+    <div class="modalOverlay" id="modalRegister">
+        <div class="modalCard" style="background-color: rgba(0, 255, 255, 0.342);">
+            <div class="modalHeader">
+                <span class="modalTitle">Create New User</span>
+                <button class="modalClose" onclick="closeModal('modalRegister')">✕</button>
+            </div>
+            <div class="modalBody">
+                <div class="formGroup">
+                    <label>Full Name</label>
+                    <input type="text" id="regName" placeholder="Full name">
+                </div>
+                <div class="formGroup">
+                    <label>Username</label>
+                    <input type="text" id="regUsername" placeholder="Username">
+                </div>
+                <div class="formGroup">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="Password">
+                </div>
+                <div class="formGroup">
+                    <label>Role</label>
+                    <select id="regRole">
+                        <option value="Administrator">Admin</option>
+                        <option value="Teacher">Teacher</option>
+                        <option value="Student">Student</option>
+                    </select>
+                </div>
+                <div class="loginError" id="registerError"></div>
+            </div>
+            <div class="modalFooter">
+                <button class="btn btn-outline" onclick="closeModal('modalRegister')">Cancel</button>
+                <button class="btn btn-primary" onclick="doRegister()">Create User</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ══════════ APP SHELL ══════════ -->
+    <div id="appShell">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebarHeader">
+                <div class="sidebarLogo">🌙</div>
+                <div class="sidebarTitle">
+                    <h2>Noor Ali Center</h2>
+                    <p>Educational Management</p>
+                </div>
+            </div>
+            <nav class="sidebarNav">
+                <div class="navSection">
+                    <div class="navSectionLabel">Main</div>
+                    <div class="navItem active" onclick="showPage('dashboard')"><span class="icon">📊</span> Dashboard
+                    </div>
+                    <div class="navItem" onclick="showPage('students')"><span class="icon">👨‍🎓</span> Students <span
+                            class="badge" id="navStudentCount">0</span></div>
+                    <div class="navItem" onclick="showPage('teachers')"><span class="icon">👨‍🏫</span> Teachers <span
+                            class="badge" id="navTeacherCount">0</span></div>
+                    <div class="navItem" onclick="showPage('courses')"><span class="icon">📚</span> Courses <span
+                            class="badge" id="navCourseCount">0</span></div>
+                </div>
+                <div class="navSection">
+                    <div class="navSectionLabel">Attendance</div>
+                    <div class="navItem" onclick="showPage('studentAttendance')"><span class="icon">✅</span> Student
+                        Attendance</div>
+                    <div class="navItem" onclick="showPage('teacherAttendance')"><span class="icon">📋</span> Teacher
+                        Attendance</div>
+                    <div class="navItem" onclick="showPage('attendanceReport')"><span class="icon">📈</span> Attendance
+                        Report</div>
+                </div>
+                <div class="navSection">
+                    <div class="navSectionLabel">Finance</div>
+                    <div class="navItem" onclick="showPage('fees')"><span class="icon">💰</span> Fee Management</div>
+                    <div class="navItem" onclick="showPage('salary')"><span class="icon">💳</span> Teacher Salary</div>
+                </div>
+                <div class="navSection">
+                    <div class="navSectionLabel">Other</div>
+                    <div class="navItem" onclick="showPage('notices')"><span class="icon">📢</span> Notice Board</div>
+                    <div class="navItem" onclick="showPage('settings')"><span class="icon">⚙️</span> Settings</div>
+                </div>
+            </nav>
+            <div class="sidebarFooter">
+                <div class="userInfo">
+                    <div class="userAvatar" id="sidebarAvatar">A</div>
+                    <div>
+                        <div class="userName" id="sidebarName">Admin</div>
+                        <div class="userRole" id="sidebarRole">Administrator</div>
+                    </div>
+                    <button class="logoutBtn" onclick="logout()">↩ Exit</button>
+                </div>
+            </div>
+        </aside>
+
+
+
+
+        <!-- MAIN -->
+        <div class="mainContent">
+            <div class="topBar">
+                <div class="topBarTitle" id="pageTitle">Dashboard</div>
+                <div class="topBarRight">
+                    <span class="topBarDate" id="topDate"></span>
+                    <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Print</button>
+                    <div class="notifBtn">🔔<span class="notifDot"></span></div>
+                </div>
+            </div>
+
+            <div class="contentArea">
+
+
+
+
+                <!-- ══ DASHBOARD ══ -->
+                <div class="page active" id="pg-dashboard">
+                    <div class="statsGrid">
+                        <div class="statCard">
+                            <div class="statIcon green">👨‍🎓</div>
+                            <div class="statInfo">
+                                <div class="label">Total Students</div>
+                                <div class="value" id="dashStudents">0</div>
+                                <div class="sub">Enrolled this year</div>
+                            </div>
+                        </div>
+                        <div class="statCard">
+                            <div class="statIcon gold">👨‍🏫</div>
+                            <div class="statInfo">
+                                <div class="label">Total Teachers</div>
+                                <div class="value" id="dashTeachers">0</div>
+                                <div class="sub">Active faculty</div>
+                            </div>
+                        </div>
+                        <div class="statCard">
+                            <div class="statIcon blue">📚</div>
+                            <div class="statInfo">
+                                <div class="label">Courses</div>
+                                <div class="value" id="dashCourses">0</div>
+                                <div class="sub">Running this term</div>
+                            </div>
+                        </div>
+                        <div class="statCard">
+                            <div class="statIcon red">💰</div>
+                            <div class="statInfo">
+                                <div class="label">Pending Fees</div>
+                                <div class="value" id="dashFees">0</div>
+                                <div class="sub">Students with dues</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quickActions">
+                        <div class="quickAction" onclick="clearStudentForm(); openModal('modalStudent')">
+                            <div class="qIcon">➕</div>
+                            <div class="qLabel">Add Student</div>
+                        </div>
+                        <div class="quickAction" onclick="clearTeacherForm(); openModal('modalTeacher')">
+                            <div class="qIcon">➕</div>
+                            <div class="qLabel">Add Teacher</div>
+                        </div>
+                        <div class="quickAction" onclick="openModal('modalCourse')">
+                            <div class="qIcon">➕</div>
+                            <div class="qLabel">Add Course</div>
+                        </div>
+                        <div class="quickAction" onclick="showPage('studentAttendance')">
+                            <div class="qIcon">📋</div>
+                            <div class="qLabel">Take Attendance</div>
+                        </div>
+                    </div>
+
+                    <div class="grid2">
+                        <div class="card">
+                            <div class="cardHeader">
+                                <span class="cardTitle">Recent Enrollments</span>
+                                <button class="btn btn-outline btn-sm" onclick="showPage('students')">View All</button>
+                            </div>
+                            <div class="cardBody" style="padding:0">
+                                <ul class="recentList" style="padding:0 22px" id="recentStudents"></ul>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="cardHeader">
+                                <span class="cardTitle">Today's Notices</span>
+                                <button class="btn btn-outline btn-sm" onclick="showPage('notices')">View All</button>
+                            </div>
+                            <div class="cardBody" style="padding:0">
+                                <ul class="recentList" style="padding:0 22px" id="recentNotices"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="cardHeader"><span class="cardTitle">Monthly Attendance Overview</span></div>
+                        <div class="cardBody">
+                            <div id="attendanceChart"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <!-- ══ STUDENTS ══ -->
+                <div class="page" id="pg-students">
+                    <div class="btnGroup" style="margin-bottom:20px">
+                        <button class="btn btn-primary" onclick="clearStudentForm(); openModal('modalStudent')">➕ Add Student</button>
+                        <button class="btn btn-outline" onclick="exportCSV('students')">⬇ Export CSV</button>
+                        <button class="btn btn-outline" onclick="window.print()">🖨️ Print List</button>
+                    </div>
+                    <div class="searchBar">
+                        <input class="searchInput" type="text" placeholder="Search students..."
+                            oninput="filterTable('studentTable', this.value)">
+                        <select class="filterSelect" onchange="filterByStatus('studentTable', this.value, 4)">
+                            <option value="">All Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                        <select class="filterSelect" onchange="filterByStatus('studentTable', this.value, 3)"
+                            id="courseFilterStudents">
+                            <option value="">All Courses</option>
+                        </select>
+                    </div>
+                    <div class="card">
+                        <div class="cardBody" style="padding:0">
+                            <div class="tableWrap">
+                                <table id="studentTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>ID</th>
+                                            <th>Phone</th>
+                                            <th>Course</th>
+                                            <th>Status</th>
+                                            <th>Fee</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="studentTBody">
+                                        <tr>
+                                            <td colspan="7">
+                                                <!-- <div class="emptyState">
+                                                    <div class="emptyIcon">👨‍🎓</div>
+                                                    <p>No students yet. Add your first student!</p>
+                                                </div> -->
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- ══ TEACHERS ══ -->
+                <div class="page" id="pg-teachers">
+                    <div class="btnGroup" style="margin-bottom:20px">
+                        <button class="btn btn-primary" onclick="clearTeacherForm(); openModal('modalTeacher')">➕ Add Teacher</button>
+                        <button class="btn btn-outline" onclick="exportCSV('teachers')">⬇ Export CSV</button>
+                        <button class="btn btn-outline" onclick="window.print()">🖨️ Print List</button>
+                    </div>
+                    <div class="searchBar">
+                        <input class="searchInput" type="text" placeholder="Search teachers..."
+                            oninput="filterTable('teacherTable', this.value)">
+                        <select class="filterSelect" onchange="filterByStatus('teacherTable', this.value, 4)">
+                            <option value="">All Status</option>
+                            <option value="Active">Active</option>
+                            <option value="On Leave">On Leave</option>
+                        </select>
+                    </div>
+                    <div class="card">
+                        <div class="cardBody" style="padding:0">
+                            <div class="tableWrap">
+                                <table id="teacherTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Teacher</th>
+                                            <th>ID</th>
+                                            <th>Subject</th>
+                                            <th>Phone</th>
+                                            <th>Status</th>
+                                            <th>Salary</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="teacherTBody">
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="emptyState">
+                                                    <div class="emptyIcon">👨‍🏫</div>
+                                                    <p>No teachers yet. Add your first teacher!</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <!-- ══ COURSES ══ -->
+                <div class="page" id="pg-courses">
+                    <div class="btnGroup" style="margin-bottom:20px">
+                        <button class="btn btn-primary" onclick="openModal('modalCourse')">➕ Add Course</button>
+                        <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+                    </div>
+                    <div class="searchBar">
+                        <input class="searchInput" type="text" placeholder="Search courses..."
+                            oninput="filterTable('courseTable', this.value)">
+                    </div>
+                    <div class="card">
+                        <div class="cardBody" style="padding:0">
+                            <div class="tableWrap">
+                                <table id="courseTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Course</th>
+                                            <th>Code</th>
+                                            <th>Teacher</th>
+                                            <th>Students</th>
+                                            <th>Duration</th>
+                                            <th>Fee</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="courseTBody">
+                                        <tr>
+                                            <td colspan="8">
+                                                <div class="emptyState">
+                                                    <div class="emptyIcon">📚</div>
+                                                    <p>No courses yet. Add your first course!</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <!-- ══ STUDENT ATTENDANCE ══ -->
+                <div class="page" id="pg-studentAttendance">
+                    <div class="card" style="margin-bottom:20px">
+                        <div class="cardBody">
+                            <div class="formRow">
+                                <div class="formGroup">
+                                    <label>Select Date</label>
+                                    <input type="date" id="attStudDate">
+                                </div>
+                                <div class="formGroup">
+                                    <label>Select Course / Class</label>
+                                    <select id="attStudCourse">
+                                        <option value="all">All Students</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="btnGroup">
+                                <button class="btn btn-primary" onclick="loadStudentAttendance()">Load Students</button>
+                                <button class="btn btn-gold" onclick="markAllPresent()">✅ Mark All Present</button>
+                                <button class="btn btn-outline" onclick="markAllAbsent()">❌ Mark All Absent</button>
+                                <button class="btn btn-primary" onclick="saveAttendance()">💾 Save Attendance</button>
+                                <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="attStudGrid" class="attendanceGrid"></div>
+                    <div style="margin-top:16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+                        <div style="display:flex;align-items:center;gap:6px">
+                            <div style="width:14px;height:14px;background:var(--emerald);border-radius:3px"></div><span
+                                style="font-size:13px">Present</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px">
+                            <div style="width:14px;height:14px;background:var(--red);border-radius:3px"></div><span
+                                style="font-size:13px">Absent</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px">
+                            <div style="width:14px;height:14px;background:var(--gold);border-radius:3px"></div><span
+                                style="font-size:13px">Late</span>
+                        </div>
+                        <span id="attSummary"
+                            style="margin-left:auto;font-weight:600;font-size:13px;color:var(--muted)"></span>
+                    </div>
+                </div>
+
+
+
+
+                <!-- ══ TEACHER ATTENDANCE ══ -->
+                <div class="page" id="pg-teacherAttendance">
+                    <div class="card" style="margin-bottom:20px">
+                        <div class="cardBody">
+                            <div class="formRow">
+                                <div class="formGroup">
+                                    <label>Select Date</label>
+                                    <input type="date" id="attTeachDate">
+                                </div>
+                                <div class="formGroup">
+                                    <label>Department / Subject</label>
+                                    <select id="attTeachSubject">
+                                        <option value="all">All Teachers</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="btnGroup">
+                                <button class="btn btn-primary" onclick="loadTeacherAttendance()">Load Teachers</button>
+                                <button class="btn btn-gold" onclick="markAllTeacherPresent()">✅ Mark All
+                                    Present</button>
+                                <button class="btn btn-outline" onclick="markAllTeacherAbsent()">❌ Mark All
+                                    Absent</button>
+                                <button class="btn btn-primary" onclick="saveTeacherAttendance()">💾 Save
+                                    Attendance</button>
+                                <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="attTeachGrid" class="attendanceGrid"></div>
+            <div style="margin-top:16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:14px;height:14px;background:var(--emerald);border-radius:3px"></div><span
+                        style="font-size:13px">Present</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:14px;height:14px;background:var(--red);border-radius:3px"></div><span
+                        style="font-size:13px">Absent</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:14px;height:14px;background:var(--gold);border-radius:3px"></div><span
+                        style="font-size:13px">Late</span>
+                </div>
+                <span id="attTeachSummary"
+                    style="margin-left:auto;font-weight:600;font-size:13px;color:var(--muted)"></span>
+            </div>
+                                </div>
+                                <div class="formGroup">
+                                    <label>To Date</label><input type="date" id="repTo">
+                                </div>
+                            </div>
+                            <div class="btnGroup">
+                                <button class="btn btn-primary" onclick="generateReport()">📈 Generate Report</button>
+                                <button class="btn btn-outline" onclick="window.print()">🖨️ Print Report</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="reportOutput"></div>
+                </div>
+
+
+
+
+
+                <!-- ══ FEE MANAGEMENT ══ -->
+                <div class="page" id="pg-fees">
+                    <div class="btnGroup" style="margin-bottom:20px">
+                        <button class="btn btn-primary" onclick="openModal('modalFee')">➕ Record Payment</button>
+                        <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+                    </div>
+                    <div class="card">
+                        <div class="cardHeader"><span class="cardTitle">Fee Records</span></div>
+                        <div class="cardBody" style="padding:0">
+                            <div class="tableWrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Course</th>
+                                            <th>Amount</th>
+                                            <th>Date</th>
+                                            <th>Method</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="feeTBody">
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="emptyState">
+                                                    <div class="emptyIcon">💰</div>
+                                                    <p>No fee records yet.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <!-- ══ SALARY ══ -->
+                <div class="page" id="pg-salary">
+                    <div class="btnGroup" style="margin-bottom:20px">
+                        <button class="btn btn-primary" onclick="openModal('modalSalary')">➕ Pay Salary</button>
+                        <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+                    </div>
+                    <div class="card">
+                        <div class="cardHeader"><span class="cardTitle">Salary Records</span></div>
+                        <div class="cardBody" style="padding:0">
+                            <div class="tableWrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Teacher</th>
+                                            <th>Month</th>
+                                            <th>Salary</th>
+                                            <th>Bonus</th>
+                                            <th>Deduction</th>
+                                            <th>Net Pay</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="salaryTBody">
+                                        <tr>
+                                            <td colspan="8">
+                                                <div class="emptyState">
+                                                    <div class="emptyIcon">💳</div>
+                                                    <p>No salary records yet.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+                <!-- ══ NOTICES ══ -->
+                <div class="page" id="pg-notices">
+                    <div class="btnGroup" style="margin-bottom:20px">
+                        <button class="btn btn-primary" onclick="openModal('modalNotice')">📢 Post Notice</button>
+                        <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+                    </div>
+                    <div id="noticeList"></div>
+                </div>
+
+
+            <!-- ADD NOTICE -->
+            <form id="AddNotice">
+                <div class="modalOverlay" id="modalNotice">
+                    <div class="modal">
+                        <div class="modalHeader">
+                            <span class="modalTitle" id="noticeModalTitle">Add New Notice</span>
+                            <button type="button" class="modalClose" onclick="closeModal('modalNotice')">✕</button>
+                        </div>
+                        <div class="modalBody">
+                            <input type="hidden" id="editNoticeId">
+                            <div class="formRow">
+                                <div class="formGroup"><label>Title *</label><input type="text" id="notTitle" placeholder="Notice title"></div>
+                                <div class="formGroup"><label>Category</label><input type="text" id="notCat" placeholder="e.g. General"></div>
+                            </div>
+                            <div class="formRow">
+                                <div class="formGroup"><label>Date</label><input type="date" id="notDate"></div>
+                            </div>
+                            <div class="formGroup"><label>Message</label><textarea id="notMsg" placeholder="Notice content..."></textarea></div>
+                        </div>
+                        <div class="modalFooter">
+                            <button type="button" class="btn btn-outline" onclick="closeModal('modalNotice')">Cancel</button>
+                            <input type="submit" class="btn btn-primary" value="💾 Save Notice">
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+
+
+
+                <!-- ══ SETTINGS ══ -->
+                <div class="page" id="pg-settings" style="margin-left: 260px;">
+                    <div class="grid2">
+                        <div class="card">
+                            <div class="cardHeader"><span class="cardTitle">🏫 School Settings</span></div>
+                            <div class="cardBody">
+                                <div class="formGroup"><label>Center Name</label><input type="text" id="setName"
+                                        value="Noor Ali Educational Center"></div>
+                                <div class="formGroup"><label>Address</label><input type="text" id="setAddr"
+                                        value="Main Road, Peshawar"></div>
+                                <div class="formGroup"><label>Phone</label><input type="text" id="setPhone"
+                                        value="+92-91-1234567"></div>
+                                <div class="formGroup"><label>Email</label><input type="email" id="setEmail"
+                                        value="info@noorali.edu.pk"></div>
+                                <button class="btn btn-primary" onclick="showToast('Settings saved!')">💾 Save
+                                    Settings</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="cardHeader"><span class="cardTitle">🔑 Change Password</span></div>
+                            <div class="cardBody">
+                                <div class="formGroup"><label>Current Password</label><input type="password"
+                                        placeholder="••••••"></div>
+                                <div class="formGroup"><label>New Password</label><input type="password"
+                                        placeholder="••••••"></div>
+                                <div class="formGroup"><label>Confirm Password</label><input type="password"
+                                        placeholder="••••••"></div>
+                                <button class="btn btn-primary" onclick="showToast('Password updated!')">🔒 Update
+                                    Password</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="cardHeader"><span class="cardTitle">📊 System Statistics</span></div>
+                        <div class="cardBody">
+                            <div class="infoGrid" id="settingsStats"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /contentArea -->
+        </div><!-- /mainContent -->
+    </div><!-- /appShell -->
+
+
+
+
+    <!-- ══════ MODALS ══════ -->
+
+    <!-- ADD STUDENT -->
+     <form id="Addstudent" enctype="multipart/form-data">
+         
+         <div class="modalOverlay" id="modalStudent">
+             <div class="modal">
+                    <div class="modalHeader">
+                     <span class="modalTitle" id="studentModalTitle">Add New Student</span>
+                     <button type="button" class="modalClose" onclick="closeModal('modalStudent')">✕</button>
+                </div>
+            <div class="modalBody">
+                <input type="hidden" id="editStudentId">
+                <div class="formRow">
+                    <div class="formGroup"><label>Id *</label><input type="text" id="sId" name="Id"
+                        placeholder="e.g. Stu-xxx"></div>
+                    <div class="formGroup"><label>First Name *</label><input type="text" id="sfName" name="firstName"
+                        placeholder="e.g. Zubair"></div>
+                    <div class="formGroup"><label>Last Name *</label><input type="text" id="slName" name="lastName"
+                        placeholder="e.g. Sultani"></div>
+                        <div class="formGroup"><label>Father's Name *</label><input type="text" id="sFather" name="fatherName"
+                            placeholder="Father's name"></div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup"><label>Date of Birth</label><input type="date" id="sDOB" name="dob"></div>
+                    <div class="formGroup"><label>Gender</label>
+                        <select id="sGender" name="gender">
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup"><label>Phone *</label><input type="tel" id="sPhone" name="phone"
+                            placeholder="+93-xxx-xxxxxxx"></div>
+                            <div class="formGroup"><label>Email</label><input type="email" id="sEmail" name="email"
+                                placeholder="email@example.com"></div>
+                            </div>
+                            <div class="formRow">
+                                <div class="formGroup"><label>Enroll in Course *</label>
+                                    <select id="sCourse" name="course">
+                                        <option value="">-- Select Course --</option>
+                                        <option value="advanced mathematics">Advanced Mathematics</option>
+                                        <option value="english communication">English Communication</option>
+                                        <option value="coputer basics">Computer Basics</option>
+                                        <option value="physics fundamental">Physics Fundamentals</option>
+                                    </select>
+                                </div>
+                                <div class="formGroup"><label>Admission Date</label><input type="date" id="sAdmDate" name="admDate"></div>
+                            </div>
+                            <div class="formRow">
+                                <div class="formGroup"><label>Status</label>
+                        <select id="sStatus" name="status">
+                            <option>Active</option>
+                            <option>Inactive</option>
+                        </select>
+                    </div>
+                    <div class="formGroup"><label>Fee Amount (PKR)</label><input type="number" id="sFee" name="fee"
+                            placeholder="5000"></div>
+                </div>
+                <div class="formGroup"><label>Address</label><input type="text" id="sAddress" name="address"
+                    placeholder="Student address"></div>
+                <div class="formGroup"><label>Notes</label><textarea id="sNotes"
+                    placeholder="Additional notes..." name="notes"></textarea></div>
+                </div>
+                <div class="modalFooter">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modalStudent')">Cancel</button>
+                    <input type="submit" class="btn btn-primary" id="saveBtn" value="💾 Save Student" />
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+
+
+
+    <!-- ADD TEACHER -->
+     <form id="addTeacher" enctype="multipart/form-data">
+    <div class="modalOverlay" id="modalTeacher">
+        <div class="modal">
+            <div class="modalHeader">
+                <span class="modalTitle" id="teacherModalTitle">Add New Teacher</span>
+                <button type="button" class="modalClose" onclick="closeModal('modalTeacher')">✕</button>
+            </div>
+            <div class="modalBody">
+                <input type="hidden" id="editTeacherId">
+                <div class="formRow">
+                    <div class="formGroup"><label>Teacher ID *</label><input type="text" id="tId" name="Id"
+                            placeholder="e.g. T-101"></div>
+                    <div class="formGroup"><label>First Name *</label><input type="text" id="tfirstName" name="firstName"
+                            placeholder="e.g. Dr. Hassan"></div>
+                    <div class="formGroup"><label>Last Name *</label><input type="text" id="tlastName" name="lastName"
+                            placeholder="e.g.  Khan"></div>
+                    <div class="formGroup"><label>Father Name *</label><input type="text" id="tfatherName" name="fatherName"
+                            placeholder=""></div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup"><label>Subject / Department *</label><input type="text" id="tSubject" name="subject"   placeholder="e.g. Mathematics"></div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup"><label>Phone *</label><input type="tel" id="tPhone" name="phone"
+                            placeholder="+93-xxx-xxxxxxx"></div>
+                    <div class="formGroup"><label>Email</label><input type="email" id="tEmail" name="email"
+                            placeholder="email@example.com"></div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup"><label>Qualification</label><input type="text" id="tQual" name="qualification"
+                            placeholder="e.g. M.Sc. Mathematics"></div>
+                    <div class="formGroup"><label>Experience</label><input type="text" id="tExp" name="experience"
+                            placeholder="e.g. 5 years"></div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup"><label>Join Date</label><input type="date" id="tJoin" name="joinDate"></div>
+                    <div class="formGroup"><label>Status</label>
+                        <select id="tStatus" name="status">
+                            <option>Active</option>
+                            <option>On Leave</option>
+                            <option>Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup"><label>Monthly Salary (PKR)</label><input type="number" id="tSalary" name="salary"   placeholder="30000"></div>
+                    <div class="formGroup"><label>Gender</label>
+                        <select id="tGender" name="gender">
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="formGroup"><label>Address</label><input type="text" id="tAddress" name="address"
+                        placeholder="Teacher address"></div>
+                <div class="formGroup"><label>Notes</label><textarea id="tNotes" name="notes"
+                        placeholder="Additional notes..."></textarea></div>
+            </div>
+            <div class="modalFooter">
+                <button type="button" class="btn btn-outline" onclick="closeModal('modalTeacher')">Cancel</button>
+                <input class="btn btn-primary" type="submit" id="saveTeacherBtn" value="💾 Save Teacher" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+    
+<!-- ADD COURSE -->
+<div class="modalOverlay" id="modalCourse">
+  <div class="modal">
+    <div class="modalHeader">
+      <span class="modalTitle" id="courseModalTitle">Add New Course</span>
+      <button class="modalClose" onclick="closeModal('modalCourse')">✕</button>
+    </div>
+    <div class="modalBody">
+      <input type="hidden" id="editCourseId">
+      <div class="formRow">
+        <div class="formGroup"><label>Course Name *</label><input type="text" id="cName" placeholder="e.g. Advanced Mathematics"></div>
+        <div class="formGroup"><label>Course Code *</label><input type="text" id="cCode" placeholder="e.g. MATH-101"></div>
+      </div>
+      <div class="formRow">
+        <div class="formGroup"><label>Assign Teacher</label>
+          <select id="cTeacher"><option value="">-- Select Teacher --</option></select>
+        </div>
+        <div class="formGroup"><label>Duration</label><input type="text" id="cDuration" placeholder="e.g. 6 months"></div>
+      </div>
+      <div class="formRow">
+        <div class="formGroup"><label>Start Date</label><input type="date" id="cStart"></div>
+        <div class="formGroup"><label>End Date</label><input type="date" id="cEnd"></div>
+      </div>
+      <div class="formRow">
+        <div class="formGroup"><label>Fee (AFG)</label><input type="number" id="cFee" placeholder="5000"></div>
+        <div class="formGroup"><label>Max Students</label><input type="number" id="cMax" placeholder="30"></div>
+      </div>
+      <div class="formRow">
+        <div class="formGroup"><label>Status</label>
+          <select id="cStatus"><option>Active</option><option>Upcoming</option><option>Completed</option></select>
+        </div>
+        <div class="formGroup"><label>Schedule</label><input type="text" id="cSchedule" placeholder="e.g. Mon/Wed 9-11 AM"></div>
+      </div>
+      <div class="formGroup"><label>Description</label><textarea id="cDesc" placeholder="Course description..."></textarea></div>
+    </div>
+    <div class="modalFooter">
+      <button class="btn btn-outline" onclick="closeModal('modalCourse')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCourse()">💾 Save Course</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- FEE PAYMENT -->
+<div class="modalOverlay" id="modalFee">
+  <div class="modal">
+    <div class="modalHeader">
+      <span class="modalTitle">Record Fee Payment</span>
+      <button class="modalClose" onclick="closeModal('modalFee')">✕</button>
+    </div>
+    <div class="modalBody">
+      <div class="formGroup"><label>Student *</label>
+        <select id="feeStudent"><option value="">-- Select Student --</option></select>
+      </div>
+      <div class="formRow">
+        <div class="formGroup"><label>Amount (PKR) *</label><input type="number" id="feeAmount" placeholder="5000"></div>
+        <div class="formGroup"><label>Payment Date *</label><input type="date" id="feeDate"></div>
+      </div>
+      <div class="formRow">
+        <div class="formGroup"><label>Payment Method</label>
+          <select id="feeMethod"><option>Cash</option><option>Bank Transfer</option><option>Cheque</option><option>Online</option></select>
+        </div>
+        <div class="formGroup"><label>Status</label>
+          <select id="feeStatus"><option>Paid</option><option>Partial</option><option>Pending</option></select>
+        </div>
+      </div>
+      <div class="formGroup"><label>Notes</label><textarea id="feeNotes" placeholder="Receipt number, remarks..."></textarea></div>
+    </div>
+    <div class="modalFooter">
+      <button class="btn btn-outline" onclick="closeModal('modalFee')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveFee()">💾 Save Payment</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- SALARY -->
+<div class="modalOverlay" id="modalSalary">
+  <div class="modal">
+    <div class="modalHeader">
+      <span class="modalTitle">Pay Teacher Salary</span>
+      <button class="modalClose" onclick="closeModal('modalSalary')">✕</button>
+    </div>
+    <div class="modalBody">
+      <div class="formRow">
+        <div class="formGroup"><label>Teacher *</label>
+          <select id="salTeacher"><option value="">-- Select Teacher --</option></select>
+        </div>
+        <div class="formGroup"><label>Month *</label><input type="month" id="salMonth"></div>
+      </div>
+      <div class="formRow">
+        <div class="formGroup"><label>Salary (PKR)</label><input type="number" id="salAmount" placeholder="30000"></div>
+        <div class="formGroup"><label>Bonus (PKR)</label><input type="number" id="salBonus" placeholder="0"></div>
+      </div>
+      <div class="formRow">
+        <div class="formGroup"><label>Deduction (PKR)</label><input type="number" id="salDeduct" placeholder="0"></div>
+        <div class="formGroup"><label>Status</label>
+          <select id="salStatus"><option>Paid</option><option>Pending</option></select>
+        </div>
+      </div>
+      <div class="formGroup"><label>Notes</label><textarea id="salNotes" placeholder="Remarks..."></textarea></div>
+    </div>
+    <div class="modalFooter">
+      <button class="btn btn-outline" onclick="closeModal('modalSalary')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSalary()">💾 Pay Salary</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- NOTICE -->
+<div class="modalOverlay" id="modalNotice">
+  <div class="modal">
+    <div class="modalHeader">
+      <span class="modalTitle">Post New Notice</span>
+      <button class="modalClose" onclick="closeModal('modalNotice')">✕</button>
+    </div>
+    <div class="modalBody">
+      <div class="formGroup"><label>Title *</label><input type="text" id="notTitle" placeholder="Notice title"></div>
+      <div class="formRow">
+        <div class="formGroup"><label>Category</label>
+          <select id="notCat"><option>General</option><option>Exam</option><option>Holiday</option><option>Fee</option><option>Event</option></select>
+        </div>
+        <div class="formGroup"><label>Date</label><input type="date" id="notDate"></div>
+      </div>
+      <div class="formGroup"><label>Message *</label><textarea id="notMsg" placeholder="Notice content..." style="min-height:120px"></textarea></div>
+    </div>
+    <div class="modalFooter">
+      <button class="btn btn-outline" onclick="closeModal('modalNotice')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNotice()">📢 Post Notice</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- VIEW STUDENT DETAIL -->
+<div class="modalOverlay" id="modalViewStudent">
+  <div class="modal" style="max-width:640px">
+    <div class="modalHeader">
+      <span class="modalTitle">Student Profile</span>
+      <button class="modalClose" onclick="closeModal('modalViewStudent')">✕</button>
+    </div>
+    <div class="modalBody" id="studentDetailBody"></div>
+    <div class="modalFooter">
+      <button class="btn btn-outline" onclick="closeModal('modalViewStudent')">Close</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- VIEW Detail DETAIL -->
+<div class="modalOverlay" id="modalViewTeacher">
+  <div class="modal" style="max-width:640px">
+    <div class="modalHeader">
+      <span class="modalTitle">Teacher Profile</span>
+      <button class="modalClose" onclick="closeModal('modalViewTeacher')">✕</button>
+    </div>
+    <div class="modalBody" id="TeacherDetailBody"></div>
+    <div class="modalFooter">
+      <button class="btn btn-outline" onclick="closeModal('modalViewTeacher')">Close</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="modalOverlay" id="modalConfirm">
+  <div class="modal" style="max-width:380px">
+    <div class="modalHeader"><span class="modalTitle">Confirm Delete</span><button class="modalClose" onclick="closeModal('modalConfirm')">✕</button></div>
+    <div class="modalBody">
+      <p style="font-size:14px;color:var(--muted)">Are you sure you want to delete this record? This action cannot be undone.</p>
+    </div>
+    <div class="modalFooter">
+      <button class="btn btn-outline" onclick="closeModal('modalConfirm')">Cancel</button>
+      <button class="btn btn-red" id="confirmDeleteBtn">🗑️ Delete</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+
+
+<script src="javascript/app.js"></script>
+</body>
+
+</html>
